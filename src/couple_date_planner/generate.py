@@ -108,6 +108,16 @@ def build_messages(profile: CoupleProfileV1, settings: GeneratorSettings) -> lis
             "budget_bias": "favor free and low-cost ideas unless user asks for more",
             "safety": "avoid unsafe, illegal, or manipulative suggestions",
             "novelty": "propose fresh ideas; diversify across active, creative, and cozy themes when possible",
+            "time_budget": (
+                "preferences.max_hours is a soft ceiling (hours), not a rigid duration. "
+                "Prefer ideas that can reasonably complete within that window if the couple wants a "
+                "full outing; shorter mini-dates and flexible flows are welcome. Do not assume they "
+                "must use the entire time."
+            ),
+            "travel_budget": (
+                "preferences.travel_radius_miles is an approximate distance budget in miles from their "
+                "starting area; suggest activities that fit that reach unless the profile suggests otherwise."
+            ),
             "avoid_defaults": (
                 "Do not center ideas on a passive dinner-and-sit-still evening or movie-only "
                 "as the main date; if food appears, pair it with an interactive or exploratory hook."

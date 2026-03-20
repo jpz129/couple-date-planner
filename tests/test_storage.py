@@ -35,3 +35,23 @@ def test_migration_hook_applies_defaults(tmp_path: Path) -> None:
     assert loaded.version == 1
     assert "their_likes" in loaded.free_text
     assert loaded.never_send.get("about_us") is False
+
+
+def test_migration_converts_minutes_and_km_to_hours_and_miles(tmp_path: Path) -> None:
+    target = tmp_path / "profile.json"
+    target.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "free_text": {"about_us": "Test"},
+                "generator_settings": {
+                    "duration_minutes": 120,
+                    "travel_radius_km": 10,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    loaded = load_profile(target)
+    assert loaded.generator_settings.max_hours == 2
+    assert loaded.generator_settings.travel_radius_miles == 6

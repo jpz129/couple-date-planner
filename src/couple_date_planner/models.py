@@ -41,8 +41,18 @@ class GeneratorSettings(BaseModel):
     comfort_zone: int = Field(default=35, ge=0, le=100)
     drinking: DrinkingPreference = DrinkingPreference.either
     environment: EnvironmentPreference = EnvironmentPreference.either
-    duration_minutes: int = Field(default=120, ge=30, le=720)
-    travel_radius_km: int = Field(default=10, ge=0, le=100)
+    max_hours: int = Field(
+        default=4,
+        ge=1,
+        le=24,
+        description="Soft upper bound on outing length (hours); 24 means up to a full day.",
+    )
+    travel_radius_miles: int = Field(
+        default=10,
+        ge=0,
+        le=100,
+        description="Approximate max travel distance budget in miles.",
+    )
     idea_count: int = Field(default=5, ge=1, le=8)
     model_override: str = ""
 
@@ -107,6 +117,27 @@ def default_profile() -> CoupleProfileV1:
     return profile.with_defaults()
 
 
+def _migrate_generator_settings_inplace(gs: dict[str, Any]) -> None:
+    if not isinstance(gs, dict):
+        return
+    if "max_hours" not in gs and "duration_minutes" in gs:
+        try:
+            minutes = int(gs["duration_minutes"])
+        except (TypeError, ValueError):
+            minutes = 240
+        hours = max(1, min(24, (minutes + 30) // 60))
+        gs["max_hours"] = hours
+        gs.pop("duration_minutes", None)
+    if "travel_radius_miles" not in gs and "travel_radius_km" in gs:
+        try:
+            km = float(gs["travel_radius_km"])
+        except (TypeError, ValueError):
+            km = 0.0
+        miles = max(0, min(100, int(round(km * 0.621371))))
+        gs["travel_radius_miles"] = miles
+        gs.pop("travel_radius_km", None)
+
+
 def migrate_profile_data(payload: dict[str, Any]) -> CoupleProfileV1:
     if not payload:
         return default_profile()
@@ -114,6 +145,11 @@ def migrate_profile_data(payload: dict[str, Any]) -> CoupleProfileV1:
     version = payload.get("version", 1)
     if version != PROFILE_VERSION:
         payload["version"] = PROFILE_VERSION
+
+    gs = payload.get("generator_settings")
+    if isinstance(gs, dict):
+        _migrate_generator_settings_inplace(gs)
+        payload["generator_settings"] = gs
 
     profile = CoupleProfileV1.model_validate(payload)
     return profile.with_defaults()

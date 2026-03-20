@@ -110,18 +110,23 @@ def _settings_ui(profile: CoupleProfileV1) -> CoupleProfileV1:
             value=settings.comfort_zone,
             help="0 means super familiar, 100 means adventurous.",
         )
-        settings.duration_minutes = st.slider(
-            "Available time (minutes)",
-            min_value=30,
-            max_value=720,
-            value=settings.duration_minutes,
-            step=15,
+        settings.max_hours = st.slider(
+            "Available time (up to, hours)",
+            min_value=1,
+            max_value=24,
+            value=settings.max_hours,
+            step=1,
+            help=(
+                "Soft upper limit: ideas should usually fit within about this much window, "
+                "but shorter outings are fine. 24 = up to a full day."
+            ),
         )
-        settings.travel_radius_km = st.slider(
-            "Travel radius (km)",
+        settings.travel_radius_miles = st.slider(
+            "Travel radius (miles)",
             min_value=0,
             max_value=100,
-            value=settings.travel_radius_km,
+            value=settings.travel_radius_miles,
+            help="Rough max distance you're willing to go for the date.",
         )
     return profile
 
