@@ -104,10 +104,22 @@ def build_messages(profile: CoupleProfileV1, settings: GeneratorSettings) -> lis
             ),
         },
         "instructions": {
+            "profile_usage": (
+                "Use profile_context as creative inspiration and light flavor—not as a topic list to "
+                "match one-for-one. Shared interests tell you about the couple's energy and personality; "
+                "let that inform the tone and vibe of ideas, but spread suggestions across different "
+                "categories and experiences. For example, if they like dancing, at most one idea should "
+                "directly involve dancing—the rest should draw on adjacent energy (playful, social, "
+                "physical) in completely different activities."
+            ),
             "tone": "warm, playful, genuine—never corny or generic-romantic cliché",
             "budget_bias": "favor free and low-cost ideas unless user asks for more",
             "safety": "avoid unsafe, illegal, or manipulative suggestions",
-            "novelty": "propose fresh ideas; diversify across active, creative, and cozy themes when possible",
+            "novelty": (
+                "Actively diversify: spread across active_competitive, creative_exploratory, and "
+                "unique_cozy themes. No single interest from the profile should dominate more than "
+                "one idea in the returned set."
+            ),
             "time_budget": (
                 "preferences.max_hours is a soft ceiling (hours), not a rigid duration. "
                 "Prefer ideas that can reasonably complete within that window if the couple wants a "
